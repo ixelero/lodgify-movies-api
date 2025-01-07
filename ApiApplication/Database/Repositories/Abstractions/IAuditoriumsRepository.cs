@@ -1,11 +1,8 @@
 ﻿using ApiApplication.Database.Entities;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ApiApplication.Database.Repositories.Abstractions
+namespace ApiApplication.Database.Repositories.Abstractions;
+
+public interface IAuditoriumsRepository
 {
-    public interface IAuditoriumsRepository
-    {
-        Task<AuditoriumEntity> GetAsync(int auditoriumId, CancellationToken cancel);
-    }
+    Task<AuditoriumEntity> GetAsync(int auditoriumId, CancellationToken cancel);
 }

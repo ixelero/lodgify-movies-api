@@ -31,6 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\CodeMetricsConfig.txt" />
+    <AdditionalFiles Include="..\CodeMetricsConfig.txt" />
   </ItemGroup>
 </Project>
