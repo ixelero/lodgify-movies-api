@@ -15,7 +15,7 @@ public class TicketsRepository : ITicketsRepository
 
     public Task<TicketEntity> GetAsync(Guid id, CancellationToken cancel) => _context.Tickets.FirstOrDefaultAsync(x => x.Id == id, cancel);
 
-    public async Task<IEnumerable<TicketEntity>> GetEnrichedAsync(int showtimeId, CancellationToken cancel)
+    public async Task<IList<TicketEntity>> GetEnrichedAsync(int showtimeId, CancellationToken cancel)
     {
         return await _context.Tickets
             .Include(x => x.Showtime)
@@ -32,7 +32,7 @@ public class TicketsRepository : ITicketsRepository
             Seats = new List<SeatEntity>(selectedSeats)
         });
 
-        _ = await _context.SaveChangesAsync(cancel);
+        await _context.SaveChangesAsync(cancel);
 
         return ticket.Entity;
     }
@@ -40,8 +40,8 @@ public class TicketsRepository : ITicketsRepository
     public async Task<TicketEntity> ConfirmPaymentAsync(TicketEntity ticket, CancellationToken cancel)
     {
         ticket.Paid = true;
-        _ = _context.Update(ticket);
-        _ = await _context.SaveChangesAsync(cancel);
+        _context.Update(ticket);
+        await _context.SaveChangesAsync(cancel);
         return ticket;
     }
 }

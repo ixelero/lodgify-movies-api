@@ -7,7 +7,7 @@ public static class Program
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder => {
-                _ = webBuilder.ConfigureLogging(options => options.AddConsole());
-                _ = webBuilder.UseStartup<Startup>();
+                webBuilder.ConfigureLogging(options => options.AddConsole());
+                webBuilder.UseStartup<Startup>();
             });
 }

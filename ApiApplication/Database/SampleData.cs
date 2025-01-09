@@ -8,10 +8,9 @@ public static class SampleData
     {
         using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var context = serviceScope.ServiceProvider.GetService<CinemaContext>();
-        _ = context.Database.EnsureCreated();
+        context.Database.EnsureCreated();
 
-
-        _ = context.Auditoriums.Add(new AuditoriumEntity
+        context.Auditoriums.Add(new AuditoriumEntity
         {
             Id = 1,
             Showtimes =
@@ -33,19 +32,19 @@ public static class SampleData
             Seats = GenerateSeats(1, 28, 22)
         });
 
-        _ = context.Auditoriums.Add(new AuditoriumEntity
+        context.Auditoriums.Add(new AuditoriumEntity
         {
             Id = 2,
             Seats = GenerateSeats(2, 21, 18)
         });
 
-        _ = context.Auditoriums.Add(new AuditoriumEntity
+        context.Auditoriums.Add(new AuditoriumEntity
         {
             Id = 3,
             Seats = GenerateSeats(3, 15, 21)
         });
 
-        _ = context.SaveChanges();
+        context.SaveChanges();
     }
 
     private static List<SeatEntity> GenerateSeats(int auditoriumId, short rows, short seatsPerRow)

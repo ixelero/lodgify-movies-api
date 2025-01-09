@@ -1,6 +1,9 @@
 using ApiApplication.Database;
 using ApiApplication.Database.Repositories;
 using ApiApplication.Database.Repositories.Abstractions;
+using ApiApplication.Mappings;
+using ApiApplication.Services;
+using ApiApplication.Services.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -18,18 +21,22 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        _ = services.AddTransient<IShowtimesRepository, ShowtimesRepository>();
-        _ = services.AddTransient<ITicketsRepository, TicketsRepository>();
-        _ = services.AddTransient<IAuditoriumsRepository, AuditoriumsRepository>();
+        services.AddAutoMapper(typeof(MoviesProfile));
 
-        _ = services.AddDbContext<CinemaContext>(options => {
-            _ = options.UseInMemoryDatabase("CinemaDb")
-                .EnableSensitiveDataLogging()
-                .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-        });
-        _ = services.AddControllers();
-
-        _ = services.AddHttpClient();
+        services
+            .AddTransient<IShowtimesRepository, ShowtimesRepository>()
+            .AddTransient<ITicketsRepository, TicketsRepository>()
+            .AddTransient<IAuditoriumsRepository, AuditoriumsRepository>()
+            .AddScoped<IShowtimesService, ShowtimesService>()
+            .AddDbContext<CinemaContext>(options =>
+                options
+                    .UseInMemoryDatabase("CinemaDb")
+                    .EnableSensitiveDataLogging()
+                    .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning)))
+            .AddHttpClient()
+            .AddSwaggerGen()
+            .AddControllers()
+            .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,16 +44,17 @@ public class Startup
     {
         if (env.IsDevelopment())
         {
-            _ = app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage();
         }
 
-        _ = app.UseHttpsRedirection();
-
-        _ = app.UseRouting();
-        _ = app.UseAuthentication();
-        _ = app.UseAuthorization();
-
-        _ = app.UseEndpoints(endpoints => endpoints.MapControllers());
+        app
+            .UseHttpsRedirection()
+            .UseRouting()
+            .UseSwagger()
+            .UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Movies API"))
+            .UseAuthentication()
+            .UseAuthorization()
+            .UseEndpoints(endpoints => endpoints.MapControllers());
 
         SampleData.Initialize(app);
     }

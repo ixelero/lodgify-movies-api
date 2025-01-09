@@ -7,6 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+COPY ./*.sln ./nuget.config ./Directory.Build.props ./Directory.Packages.props ./
 COPY ["ApiApplication/ApiApplication.csproj", "ApiApplication/"]
 RUN dotnet restore "ApiApplication/ApiApplication.csproj"
 COPY . .

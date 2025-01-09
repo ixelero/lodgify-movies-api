@@ -28,15 +28,13 @@ public class ShowtimesRepository : IShowtimesRepository
             .FirstOrDefaultAsync(x => x.Id == id, cancel);
     }
 
-    public async Task<IEnumerable<ShowtimeEntity>> GetAllAsync(Expression<Func<ShowtimeEntity, bool>> filter, CancellationToken cancel)
+    public async Task<IList<ShowtimeEntity>> GetAllAsync(Expression<Func<ShowtimeEntity, bool>> filter, CancellationToken cancel)
     {
-        if (filter == null)
-        {
-            return await _context.Showtimes
+        return filter == null
+            ? await _context.Showtimes
             .Include(x => x.Movie)
-            .ToListAsync(cancel);
-        }
-        return await _context.Showtimes
+            .ToListAsync(cancel)
+            : await _context.Showtimes
             .Include(x => x.Movie)
             .Where(filter)
             .ToListAsync(cancel);
@@ -45,7 +43,7 @@ public class ShowtimesRepository : IShowtimesRepository
     public async Task<ShowtimeEntity> CreateShowtime(ShowtimeEntity showtimeEntity, CancellationToken cancel)
     {
         var showtime = await _context.Showtimes.AddAsync(showtimeEntity, cancel);
-        _ = await _context.SaveChangesAsync(cancel);
+        await _context.SaveChangesAsync(cancel);
         return showtime.Entity;
     }
 }
